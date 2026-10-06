@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S - Merkezi İşletim Sistemi v3.0</title>
+    <title>J.A.R.V.I.S - Küresel Otonom İşletim Sistemi v5.0</title>
     <style>
         /* --- GELİŞMİŞ GÖRSEL ARAYÜZ (UI) AYARLARI --- */
         :root {
@@ -11,6 +11,7 @@
             --jarvis-koyu: #050a0f;
             --kullanici-yesil: #00ff6a;
             --hata-kirmizi: #ff003c;
+            --uyari-sari: #ffcc00;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -40,15 +41,43 @@
             font-size: 28px;
             text-align: center;
             letter-spacing: 4px;
-            margin-bottom: 30px;
+            margin-bottom: 5px;
             text-shadow: 0 0 15px var(--jarvis-mavi);
             font-weight: bold;
+        }
+
+        /* DİJİTAL SAAT */
+        #sistem-saati {
+            font-size: 18px;
+            text-align: center;
+            color: #fff;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        /* OTONOM İZLEME GÖSTERGESİ */
+        .izleme-durumu {
+            font-size: 11px;
+            text-align: center;
+            color: var(--uyari-sari);
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            animation: nefesAlma 2s infinite;
+        }
+
+        @keyframes nefesAlma {
+            0% { opacity: 0.5; text-shadow: none; }
+            50% { opacity: 1; text-shadow: 0 0 8px var(--uyari-sari); }
+            100% { opacity: 0.5; text-shadow: none; }
         }
 
         .radar-container {
             width: 160px;
             height: 160px;
-            margin: 0 auto 40px auto;
+            margin: 0 auto 30px auto;
             border: 2px solid var(--jarvis-mavi);
             border-radius: 50%;
             position: relative;
@@ -59,7 +88,6 @@
             background: radial-gradient(circle, rgba(0,243,255,0.1) 0%, rgba(0,0,0,0) 70%);
         }
 
-        /* Konuşma anındaki dalga animasyonu */
         .ses-dalgasi {
             width: 100%;
             height: 100%;
@@ -79,9 +107,9 @@
 
         .durum-metni {
             text-align: center;
-            font-size: 15px;
-            margin-bottom: 30px;
-            height: 50px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            height: 60px;
             color: #fff;
             text-shadow: 0 0 5px rgba(255,255,255,0.5);
         }
@@ -91,7 +119,7 @@
             border: 1px solid var(--jarvis-mavi);
             color: var(--jarvis-mavi);
             padding: 15px;
-            font-size: 16px;
+            font-size: 14px;
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -141,9 +169,9 @@
         .mesaj {
             padding: 12px 18px;
             border-radius: 8px;
-            max-width: 75%;
+            max-width: 85%;
             line-height: 1.5;
-            font-size: 16px;
+            font-size: 14px;
             animation: belirmeyeGiris 0.3s ease-out forwards;
             opacity: 0;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
@@ -168,6 +196,27 @@
             color: var(--kullanici-yesil);
             text-align: right;
             border-top-right-radius: 0;
+        }
+
+        .mesaj-uyari {
+            align-self: center;
+            border: 2px solid var(--uyari-sari);
+            background: rgba(255, 204, 0, 0.1);
+            color: var(--uyari-sari);
+            text-align: center;
+            width: 90%;
+            text-shadow: 0 0 5px rgba(255,204,0,0.3);
+        }
+        
+        .mesaj-sistem {
+            align-self: center;
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+            border: none;
+            background: none;
+            box-shadow: none;
+            padding: 5px;
+            margin: 0;
         }
 
         /* YAZILI SOHBET (CHAT) ALANI */
@@ -198,10 +247,6 @@
             box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
         }
 
-        #metin-girisi::placeholder {
-            color: rgba(0, 243, 255, 0.4);
-        }
-
         #gonder-btn {
             background: var(--jarvis-mavi);
             color: var(--jarvis-koyu);
@@ -212,30 +257,6 @@
             font-size: 16px;
             cursor: pointer;
             text-transform: uppercase;
-            transition: 0.3s;
-        }
-
-        #gonder-btn:hover {
-            background: #fff;
-            box-shadow: 0 0 15px var(--jarvis-mavi);
-        }
-
-        /* Terminal Scrollbar */
-        #terminal::-webkit-scrollbar { width: 10px; }
-        #terminal::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.6); }
-        #terminal::-webkit-scrollbar-thumb { background: rgba(0, 243, 255, 0.3); border-radius: 5px; }
-        #terminal::-webkit-scrollbar-thumb:hover { background: rgba(0, 243, 255, 0.6); }
-
-        .system-msg {
-            text-align: center;
-            color: rgba(255,255,255,0.5);
-            font-size: 12px;
-            margin: 10px 0;
-            width: 100%;
-            align-self: center;
-            border: none;
-            background: none;
-            box-shadow: none;
         }
     </style>
 </head>
@@ -243,6 +264,8 @@
 
     <div id="sol-panel">
         <div class="baslik">J.A.R.V.I.S</div>
+        <div id="sistem-saati">00:00:00</div>
+        <div class="izleme-durumu" id="izleme-durumu">● KÜRESEL AĞLAR TARANIYOR</div>
         
         <div class="radar-container">
             <div id="ses-efekti" class="ses-dalgasi"></div>
@@ -258,15 +281,14 @@
 
     <div id="sag-panel">
         <div id="terminal">
-            <div class="mesaj system-msg">
-                -- Bağlantı Kuruldu | Tarih: <span id="sys-date"></span> --
+            <div class="mesaj mesaj-sistem">
+                -- Ağ Bağlantısı Kuruldu | Tarih: <span id="sys-date"></span> --
             </div>
             <div class="mesaj mesaj-jarvis">
-                <b>SİSTEM:</b> J.A.R.V.I.S Protokolü v3.0 yüklendi. Kalıcı hafıza birimleri çevrimiçi. Veritabanı bütünlüğü: %100.
+                <b>SİSTEM:</b> J.A.R.V.I.S Küresel Otonom Protokolü v5.0 yüklendi. Deprem sensörleri, küresel kriz ağları ve meteoroloji radarları devrede. Talha Bey, sistemler emrinizde.
             </div>
         </div>
         
-        <!-- YAZILI SOHBET ALANI -->
         <div id="chat-alani">
             <input type="text" id="metin-girisi" placeholder="J.A.R.V.I.S'e komut yazın..." autocomplete="off">
             <button id="gonder-btn">Gönder</button>
@@ -277,13 +299,22 @@
         document.getElementById('sys-date').textContent = new Date().toLocaleDateString('tr-TR');
 
         /**
-         * LIMITLERI ZORLAYAN J.A.R.V.I.S MİMARİSİ
+         * KÜRESEL OTONOM J.A.R.V.I.S MİMARİSİ v5.0
          */
 
-        // --- 1. HAFIZA MERKEZİ ---
+        // --- 1. DİJİTAL SAAT DÖNGÜSÜ ---
+        function saatGuncelle() {
+            const simdi = new Date();
+            const saatMetni = simdi.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('sistem-saati').textContent = saatMetni;
+        }
+        setInterval(saatGuncelle, 1000);
+        saatGuncelle();
+
+        // --- 2. HAFIZA MERKEZİ ---
         class HafizaYoneticisi {
             constructor() {
-                this.hafizaAnahtari = "JARVIS_DERIN_BELLEK_V3";
+                this.hafizaAnahtari = "JARVIS_DERIN_BELLEK_V5";
                 this.bellek = this.hafizayiYukle();
                 this.cekirdekBilgileriGuncelle();
             }
@@ -291,19 +322,20 @@
             hafizayiYukle() {
                 try {
                     const kayitliVeri = localStorage.getItem(this.hafizaAnahtari);
-                    return kayitliVeri ? JSON.parse(kayitliVeri) : { kisisel: {}, ogrenilenler: [] };
+                    return kayitliVeri ? JSON.parse(kayitliVeri) : { 
+                        kisisel: {}, 
+                        ogrenilenler: [], 
+                        sonDepremId: null, 
+                        sonHaberId: null,
+                        sonHavaDurumuZamani: 0
+                    };
                 } catch (e) {
-                    console.error("Hafıza yükleme hatası:", e);
-                    return { kisisel: {}, ogrenilenler: [] };
+                    return { kisisel: {}, ogrenilenler: [], sonDepremId: null, sonHaberId: null, sonHavaDurumuZamani: 0 };
                 }
             }
 
             kaydet() {
-                try {
-                    localStorage.setItem(this.hafizaAnahtari, JSON.stringify(this.bellek));
-                } catch (e) {
-                    console.error("Hafıza kaydetme hatası:", e);
-                }
+                localStorage.setItem(this.hafizaAnahtari, JSON.stringify(this.bellek));
             }
 
             cekirdekBilgileriGuncelle() {
@@ -312,56 +344,65 @@
                     hitap: "Talha Bey",
                     partner: "Ümmü Sude Turan",
                     okul: "Konya Gıda ve Tarım Üniversitesi Moleküler Biyoloji ve Genetik bölümü",
-                    unvan: "İletişim ve Tanıtım Topluluğu Başkanı ve proje koordinatörü",
-                    takim: "Galatasaray",
-                    araba: "Citroën C-Elysée",
-                    yetenekler: "Web geliştirme, kodlama, Canva tasarımı ve liderlik"
+                    sehir: "Konya" // Hava durumu için varsayılan
                 };
                 this.kaydet();
             }
 
-            yeniBilgiOgren(bilgi) {
-                const zaman = new Date().toLocaleDateString('tr-TR');
-                this.bellek.ogrenilenler.push({ veri: bilgi, tarih: zaman });
+            // Otonom olarak tespit edilen kritik olayları da hafızaya yazar
+            yeniBilgiOgren(bilgi, otonomMu = false) {
+                const zaman = new Date().toLocaleString('tr-TR');
+                const etiket = otonomMu ? "[OTONOM TESPİT] " : "";
+                this.bellek.ogrenilenler.push({ veri: etiket + bilgi, tarih: zaman });
+                
+                // Çok dolmasını engellemek için son 50 kaydı tut
+                if (this.bellek.ogrenilenler.length > 50) {
+                    this.bellek.ogrenilenler.shift();
+                }
                 this.kaydet();
             }
 
             ogrenilenleriGetir() {
                 if (!this.bellek.ogrenilenler || this.bellek.ogrenilenler.length === 0) 
-                    return "Şu an için sonradan öğrendiğim özel bir bilgi yok.";
+                    return "Şu an için bellek bankamda kayıtlı veri yok.";
                 
-                let metin = "Kalıcı belleğimdeki kayıtlarınız şunlar: ";
-                this.bellek.ogrenilenler.forEach((item, index) => {
+                let metin = "Kalıcı belleğimdeki son kayıtlarınız:\n";
+                // Sadece son 5 kaydı okutalım, tamamını okuması çok uzun sürer
+                const sonKayitlar = this.bellek.ogrenilenler.slice(-5);
+                sonKayitlar.forEach((item, index) => {
                     metin += `${index + 1}. ${item.veri}. `;
                 });
                 return metin;
             }
 
-            hafizayiSifirla() {
-                this.bellek.ogrenilenler = [];
+            sonOlayiKaydet(tur, id) {
+                if (tur === 'deprem') this.bellek.sonDepremId = id;
+                if (tur === 'haber') this.bellek.sonHaberId = id;
+                if (tur === 'hava') this.bellek.sonHavaDurumuZamani = id;
                 this.kaydet();
             }
         }
 
-        // --- 2. GÖRSEL VE İŞİTSEL ARAYÜZ ---
+        // --- 3. GÖRSEL ARAYÜZ ---
         class Arayuz {
             static logYazdir(kim, metin) {
                 const terminal = document.getElementById('terminal');
                 const mesajDiv = document.createElement('div');
-                mesajDiv.className = `mesaj mesaj-${kim}`;
                 
-                const kimlik = kim === 'jarvis' ? 'J.A.R.V.I.S' : 'SİZ';
-                mesajDiv.innerHTML = `<b>${kimlik}:</b> ${metin}`;
+                if (kim === 'uyari') {
+                    mesajDiv.className = `mesaj mesaj-uyari`;
+                    mesajDiv.innerHTML = `<b>⚠️ KÜRESEL UYARI ⚠️</b><br>${metin}`;
+                } else if (kim === 'sistem') {
+                    mesajDiv.className = `mesaj mesaj-sistem`;
+                    mesajDiv.innerHTML = metin;
+                } else {
+                    mesajDiv.className = `mesaj mesaj-${kim}`;
+                    const kimlik = kim === 'jarvis' ? 'J.A.R.V.I.S' : 'SİZ';
+                    mesajDiv.innerHTML = `<b>${kimlik}:</b> ${metin}`;
+                }
                 
                 terminal.appendChild(mesajDiv);
-                
-                // Kaydırmayı pürüzsüz yap
-                setTimeout(() => {
-                    terminal.scrollTo({
-                        top: terminal.scrollHeight,
-                        behavior: 'smooth'
-                    });
-                }, 50);
+                setTimeout(() => { terminal.scrollTo({ top: terminal.scrollHeight, behavior: 'smooth' }); }, 50);
             }
 
             static durumGuncelle(metin) {
@@ -375,7 +416,7 @@
             }
         }
 
-        // --- 3. DİNLEME VE KONUŞMA MOTORU ---
+        // --- 4. DİNLEME VE KONUŞMA MOTORU ---
         class SesMotoru {
             constructor(beyin) {
                 this.beyin = beyin;
@@ -384,27 +425,22 @@
                 this.btn = document.getElementById('ses-baslat-btn');
                 
                 this.sesTanimaKur();
-                Arayuz.durumGuncelle("Sistem Hazır.<br>Mikrofon veya Chat ile komut verebilirsiniz.");
+                Arayuz.durumGuncelle("Sistem Hazır.<br>Tüm Ağlar Aktif.");
             }
 
             sesTanimaKur() {
                 const STT = window.SpeechRecognition || window.webkitSpeechRecognition;
-                
                 if (!STT) {
-                    Arayuz.logYazdir("jarvis", "HATA: Tarayıcınız ses tanıma özelliğini desteklemiyor. Lütfen Chrome kullanın.");
                     this.btn.innerText = "Mikrofon Desteklenmiyor";
-                    this.btn.disabled = true;
                     return;
                 }
 
                 this.dinleyici = new STT();
                 this.dinleyici.lang = 'tr-TR';
                 this.dinleyici.interimResults = false;
-                this.dinleyici.maxAlternatives = 1;
 
                 this.dinleyici.onstart = () => {
                     Arayuz.durumGuncelle("Sizi dinliyorum...");
-                    this.btn.innerText = "DİNLENİYOR...";
                     this.btn.classList.add("dinliyor");
                     Arayuz.dalgaAnimasyonu(true);
                 };
@@ -415,63 +451,44 @@
                     this.beyin.komutIsle(komut);
                 };
 
-                this.dinleyici.onerror = (event) => {
-                    console.error("Ses Tanıma Hatası:", event.error);
-                    let hataMesaji = "Mikrofon hatası: " + event.error;
-                    if (event.error === 'not-allowed') {
-                        hataMesaji = "Lütfen tarayıcı ayarlarından MİKROFON İZNİ verin!";
-                    }
-                    Arayuz.durumGuncelle(hataMesaji);
-                };
-
                 this.dinleyici.onend = () => {
-                    this.btn.innerText = "Sistemi Aktifleştir (Mikrofon)";
                     this.btn.classList.remove("dinliyor");
                     Arayuz.dalgaAnimasyonu(false);
-                    if(!this.konusuyorMu) Arayuz.durumGuncelle("Sistem beklemede.");
                 };
 
                 this.btn.addEventListener('click', () => {
                     if (!this.konusuyorMu) {
-                        try { 
-                            this.dinleyici.start(); 
-                        } catch(e) {
-                            console.error("Dinleyici başlatılamadı:", e);
-                        }
+                        try { this.dinleyici.start(); } catch(e) {}
                     }
                 });
             }
 
-            sesliSoyle(metin) {
-                this.sentez.cancel(); // Önceki konuşmayı kes
+            sesliSoyle(metin, acilMi = false) {
+                this.sentez.cancel(); 
                 
-                Arayuz.logYazdir("jarvis", metin);
+                if (acilMi) Arayuz.logYazdir("uyari", metin);
+                else Arayuz.logYazdir("jarvis", metin);
                 
                 const utterance = new SpeechSynthesisUtterance(metin);
                 utterance.lang = 'tr-TR';
-                utterance.rate = 1.0;
+                utterance.rate = acilMi ? 1.15 : 1.0; 
                 utterance.pitch = 1.0; 
 
                 utterance.onstart = () => { 
                     this.konusuyorMu = true; 
-                    Arayuz.durumGuncelle("Yanıt veriliyor...");
+                    Arayuz.dalgaAnimasyonu(true); 
                 };
                 
                 utterance.onend = () => { 
                     this.konusuyorMu = false;
-                    Arayuz.durumGuncelle("Sistem beklemede.");
+                    Arayuz.dalgaAnimasyonu(false);
                 };
-                
-                utterance.onerror = (e) => {
-                    console.error("Konuşma Hatası:", e);
-                    this.konusuyorMu = false;
-                }
 
                 this.sentez.speak(utterance);
             }
         }
 
-        // --- 4. MERKEZİ İŞLEMCİ (YAPAY ZEKA BEYNİ) ---
+        // --- 5. YAPAY ZEKA BEYNİ & KÜRESEL OTONOM İZLEME ---
         class JarvisBeyin {
             constructor() {
                 this.hafiza = new HafizaYoneticisi();
@@ -479,125 +496,171 @@
 
             sesMotorunuBagla(motor) {
                 this.motor = motor;
+                this.otonomTaramayiBaslat(); 
             }
 
             async veriCek(url) {
                 try {
                     const cevap = await fetch(url);
-                    if (!cevap.ok) throw new Error("Ağ hatası");
                     return await cevap.json();
                 } catch (error) {
-                    console.error("Veri çekme hatası:", error);
                     return null;
                 }
             }
 
+            // OTONOM İZLEME DÖNGÜLERİ
+            otonomTaramayiBaslat() {
+                // Deprem ve Hava Durumu: 2 Dakikada Bir
+                setInterval(() => {
+                    this.depremKontrolEt();
+                    this.havaDurumuKontrolEt();
+                }, 120000); 
+
+                // Küresel Kriz ve Savaş Haberleri: 3 Dakikada Bir
+                setInterval(() => {
+                    this.kureselKrizKontrolEt();
+                }, 180000);
+
+                console.log("J.A.R.V.I.S Otonom İzleme Sistemi Devrede.");
+            }
+
+            // 1. DEPREM RADARI
+            async depremKontrolEt() {
+                const url = 'https://api.orhanaydogdu.com.tr/deprem/kandilli/live';
+                const veri = await this.veriCek(url);
+
+                if (veri && veri.result && veri.result.length > 0) {
+                    const sonDeprem = veri.result[0];
+                    const depremId = sonDeprem.earthquake_id;
+                    const siddet = parseFloat(sonDeprem.mag);
+                    
+                    if (depremId !== this.hafiza.bellek.sonDepremId && siddet >= 4.5) {
+                        this.hafiza.sonOlayiKaydet('deprem', depremId);
+                        
+                        const uyariMetni = `Acil Sismik Bildirim. ${sonDeprem.title} bölgesinde ${siddet} şiddetinde bir deprem tespit ettim.`;
+                        this.motor.sesliSoyle(uyariMetni, true); 
+                        
+                        // Otonom olarak öğren ve kaydet
+                        this.hafiza.yeniBilgiOgren(`${sonDeprem.title} bölgesinde ${siddet} şiddetinde deprem oldu.`, true);
+                    } else if (depremId !== this.hafiza.bellek.sonDepremId) {
+                         this.hafiza.sonOlayiKaydet('deprem', depremId);
+                    }
+                }
+            }
+
+            // 2. KÜRESEL KRİZ VE SAVAŞ RADARI
+            async kureselKrizKontrolEt() {
+                // TRT Dünya ve TRT Son Dakika RSS beslemelerini tarar
+                const url = 'https://api.rss2json.com/v1/api.json?rss_url=https://www.trthaber.com/sondakika.rss';
+                const veri = await this.veriCek(url);
+
+                if (veri && veri.items && veri.items.length > 0) {
+                    const sonHaber = veri.items[0];
+                    const baslik = sonHaber.title.toLowerCase();
+                    
+                    // Kriz tetikleyici kelimeler
+                    const krizKelimeListesi = ["savaş", "saldırı", "bombalı", "çatışma", "operasyon", "füze", "son dakika"];
+                    
+                    let krizVarMi = krizKelimeListesi.some(kelime => baslik.includes(kelime));
+
+                    if (sonHaber.guid !== this.hafiza.bellek.sonHaberId && krizVarMi) {
+                        this.hafiza.sonOlayiKaydet('haber', sonHaber.guid);
+                        
+                        const uyariMetni = `Küresel Ağ Bildirimi. Dünya gündeminde kritik bir gelişme var: ${sonHaber.title}`;
+                        this.motor.sesliSoyle(uyariMetni, true);
+
+                        // Otonom olarak öğren ve kaydet
+                        this.hafiza.yeniBilgiOgren(`Kritik Gelişme: ${sonHaber.title}`, true);
+                    }
+                }
+            }
+
+            // 3. HAVA DURUMU RADARI
+            async havaDurumuKontrolEt() {
+                // Ücretsiz Open-Meteo API kullanılarak Konya'nın (veya girilen şehrin) anlık durumunu çeker
+                // Koordinatlar varsayılan olarak Konya'dır (37.8667, 32.4833)
+                const url = 'https://api.open-meteo.com/v1/forecast?latitude=37.8667&longitude=32.4833&current_weather=true';
+                const veri = await this.veriCek(url);
+
+                if (veri && veri.current_weather) {
+                    const sicaklik = veri.current_weather.temperature;
+                    const ruzgar = veri.current_weather.windspeed;
+                    const simdi = Date.now();
+
+                    // Sadece aşırı hava olaylarında (örneğin sıcaklık 40 üstü, 0 altı veya rüzgar 40km üstü) ve 6 saatte bir uyarır.
+                    if (simdi - this.hafiza.bellek.sonHavaDurumuZamani > 21600000) { 
+                        if (sicaklik <= 0) {
+                            this.motor.sesliSoyle("Meteorolojik Uyarı. Dışarıda sıcaklık sıfırın altında. Don tehlikesi var.", true);
+                            this.hafiza.sonOlayiKaydet('hava', simdi);
+                        } else if (ruzgar > 40) {
+                            this.motor.sesliSoyle("Meteorolojik Uyarı. Şiddetli rüzgar fırtınası tespit edildi.", true);
+                            this.hafiza.sonOlayiKaydet('hava', simdi);
+                        }
+                    }
+                }
+            }
+
+            // --- KULLANICI KOMUTLARI ---
             async komutIsle(hamKomut) {
                 if (!hamKomut || hamKomut.trim() === "") return;
-                
                 const komut = hamKomut.toLowerCase().trim();
                 const kisisel = this.hafiza.bellek.kisisel;
 
-                // --- A. SELAMLAŞMA VE ZAMAN ---
-                if (komut.includes("merhaba") || komut.includes("nasılsın")) {
-                    this.motor.sesliSoyle(`Sistemler tam kapasite devrede ${kisisel.hitap}. Size nasıl hizmet edebilirim?`);
+                // KİMLİK VE HAFIZA
+                if (komut.includes("ben kimim") || komut.includes("beni tanıt")) {
+                    this.motor.sesliSoyle(`Siz ${kisisel.isim}'sınız. ${kisisel.okul}'nde okuyorsunuz.`);
                 }
-                else if (komut.includes("saat kaç") || komut === "saat") {
-                    const saat = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-                    this.motor.sesliSoyle(`Yerel saat şu an ${saat} efendim.`);
-                }
-                else if (komut.includes("hangi gün") || komut.includes("tarih ne") || komut === "tarih") {
-                    const tarih = new Date().toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                    this.motor.sesliSoyle(`Bugün ${tarih}.`);
-                }
-
-                // --- B. DERİN HAFIZA VE KİMLİK SORGULARI ---
-                else if (komut.includes("ben kimim") || komut.includes("beni tanıt")) {
-                    this.motor.sesliSoyle(`Siz ${kisisel.isim}'sınız. Benim mimarımsınız. ${kisisel.okul}'nde okuyor ve ${kisisel.unvan} görevini yürütüyorsunuz.`);
-                }
-                else if (komut.includes("kız arkadaşım") || komut.includes("sevgilim") || komut.includes("sude")) {
-                    this.motor.sesliSoyle(`Kız arkadaşınız ${kisisel.partner}. Dosyalarıma göre kendisi sizin için dünyadaki en değerli kişi.`);
-                }
-                else if (komut.includes("arabam") || komut.includes("motorum")) {
-                    this.motor.sesliSoyle(`Verilerime göre bir ${kisisel.araba} kullanıyorsunuz. Ayrıca 50 cc motosikletlere karşı özel bir ilginiz var.`);
-                }
-                else if (komut.includes("hangi takım") || komut.includes("takımlıyım")) {
-                    this.motor.sesliSoyle(`Siz koyu bir ${kisisel.takim} taraftarısınız ${kisisel.hitap}.`);
-                }
-
-                // --- C. DİNAMİK ÖĞRENME MOTORU ---
-                else if (komut.startsWith("şunu öğren") || komut.startsWith("bunu kaydet") || komut.startsWith("aklında tut")) {
-                    let ogrenilecekMetin = komut.replace("şunu öğren", "").replace("bunu kaydet", "").replace("aklında tut", "").trim();
-                    if (ogrenilecekMetin.length > 2) {
-                        this.hafiza.yeniBilgiOgren(ogrenilecekMetin);
-                        this.motor.sesliSoyle(`Anlaşıldı ${kisisel.hitap}. "${ogrenilecekMetin}" bilgisini kalıcı veritabanıma kaydettim.`);
-                    } else {
-                        this.motor.sesliSoyle("Neyi öğrenmem gerektiğini anlayamadım efendim. Lütfen cümleyi net kurun.");
+                else if (komut.startsWith("şunu öğren")) {
+                    let ogrenilecek = komut.replace("şunu öğren", "").trim();
+                    if (ogrenilecek.length > 2) {
+                        this.hafiza.yeniBilgiOgren(ogrenilecek, false);
+                        this.motor.sesliSoyle(`Anlaşıldı. Bunu kişisel veritabanıma kaydettim.`);
                     }
                 }
-                else if (komut.includes("neler biliyorsun") || komut.includes("öğrendiklerini say") || komut.includes("hafızanda ne var")) {
-                    const rapor = this.hafiza.ogrenilenleriGetir();
-                    this.motor.sesliSoyle(rapor);
-                }
-                else if (komut.includes("hafızayı temizle") || komut.includes("bildiklerini unut")) {
-                    this.hafiza.hafizayiSifirla();
-                    this.motor.sesliSoyle("Onaylandı. Sonradan eklenen tüm veriler kalıcı bellekten silindi.");
-                }
-
-                // --- D. İNTERNET VE API BAĞLANTILARI ---
-                else if (komut.includes("gündem") || komut.includes("haberler")) {
-                    this.motor.sesliSoyle("Haber ağlarına bağlanıyorum...");
-                    const data = await this.veriCek('https://api.rss2json.com/v1/api.json?rss_url=https://www.trthaber.com/manset_artikeller.rss');
-                    if (data && data.items && data.items.length > 0) {
-                        this.motor.sesliSoyle("Gündemdeki haberler:");
-                        // Sadece ilk haberi okuyalım ki çok uzamasın (Chat için daha iyi)
-                        setTimeout(() => { this.motor.sesliSoyle(data.items[0].title); }, 2000);
-                        if(data.items.length > 1) {
-                             setTimeout(() => { this.motor.sesliSoyle(data.items[1].title); }, 6000);
-                        }
-                    } else {
-                        this.motor.sesliSoyle("Haber sunucularıyla iletişim kurulamadı.");
-                    }
-                }
-                else if (komut.includes("kimdir") || komut.includes("nedir")) {
-                    this.motor.sesliSoyle("Wikipedia'da arıyorum...");
-                    let aranan = komut.replace("kimdir", "").replace("nedir", "").replace("bana", "").replace("anlat", "").trim();
-                    if(aranan.length === 0) {
-                        this.motor.sesliSoyle("Neyi aramam gerektiğini belirtmediniz.");
-                        return;
-                    }
-                    
-                    const data = await this.veriCek(`https://tr.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(aranan)}`);
-                    
-                    if (data && data.extract) {
-                        this.motor.sesliSoyle(data.extract);
-                    } else {
-                        this.motor.sesliSoyle(`'${aranan}' hakkında küresel ağda net bir kayıt bulamadım.`);
-                    }
-                }
-                else if (komut.includes("youtube aç") || komut === "youtube") {
-                    this.motor.sesliSoyle("YouTube protokolü başlatılıyor.");
-                    window.open("https://www.youtube.com", "_blank");
-                }
-                else if (komut.includes("google aç") || komut === "google") {
-                    this.motor.sesliSoyle("Google arama motoru açılıyor.");
-                    window.open("https://www.google.com", "_blank");
-                }
-
-                // --- E. SİSTEM KOMUTLARI ---
-                else if (komut.includes("ekranı temizle") || komut === "temizle") {
-                    const terminal = document.getElementById('terminal');
-                    terminal.innerHTML = `<div class="mesaj system-msg">-- Ekran Temizlendi --</div>`;
-                    this.motor.sesliSoyle("Arayüz temizlendi.");
+                else if (komut.includes("neler öğrendin") || komut.includes("neler biliyorsun")) {
+                    this.motor.sesliSoyle(this.hafiza.ogrenilenleriGetir());
                 }
                 
+                // HAVA DURUMU SORGULAMASI (Manuel)
+                else if (komut.includes("hava") || komut.includes("hava durumu")) {
+                    this.motor.sesliSoyle("Atmosferik verileri analiz ediyorum...");
+                    const veri = await this.veriCek('https://api.open-meteo.com/v1/forecast?latitude=37.8667&longitude=32.4833&current_weather=true');
+                    if (veri && veri.current_weather) {
+                        this.motor.sesliSoyle(`${kisisel.sehir} için anlık sıcaklık ${veri.current_weather.temperature} derece ve rüzgar hızı saatte ${veri.current_weather.windspeed} kilometredir.`);
+                    }
+                }
+
+                // DEPREM VE HABER (Manuel)
+                else if (komut.includes("deprem")) {
+                    const veri = await this.veriCek('https://api.orhanaydogdu.com.tr/deprem/kandilli/live');
+                    if (veri && veri.result && veri.result.length > 0) {
+                        const son = veri.result[0];
+                        this.motor.sesliSoyle(`Kayıtlara geçen en son sismik hareket ${son.title} bölgesinde, ${son.mag} şiddetindedir.`);
+                    }
+                }
+                else if (komut.includes("gündem") || komut.includes("savaş") || komut.includes("haber")) {
+                    this.motor.sesliSoyle("Küresel ağları tarıyorum...");
+                    const data = await this.veriCek('https://api.rss2json.com/v1/api.json?rss_url=https://www.trthaber.com/sondakika.rss');
+                    if (data && data.items && data.items.length > 0) {
+                        this.motor.sesliSoyle(`Son Dakika Gelişmesi: ${data.items[0].title}`);
+                    }
+                }
+
+                // SİSTEM ARAÇLARI
+                else if (komut.includes("saat") || komut.includes("zaman")) {
+                    const saat = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+                    this.motor.sesliSoyle(`Sistem saati şu an ${saat} efendim.`);
+                }
+                else if (komut.includes("temizle")) {
+                    document.getElementById('terminal').innerHTML = `<div class="mesaj mesaj-sistem">-- Ekran Temizlendi --</div>`;
+                }
                 else {
-                    this.motor.sesliSoyle("Bu komut sistemimde tanımlı değil. Anlayamadım.");
+                    this.motor.sesliSoyle("Komutu tanımlayamadım. İletişim protokolünü yenileyin.");
                 }
             }
         }
 
-        // --- 5. CHAT (YAZILI GİRİŞ) YÖNETİMİ ---
+        // --- 6. CHAT YÖNETİMİ ---
         function chatKurulumu(jarvisBeyin) {
             const input = document.getElementById('metin-girisi');
             const btn = document.getElementById('gonder-btn');
@@ -607,28 +670,36 @@
                 if (metin) {
                     Arayuz.logYazdir("kullanici", metin);
                     jarvisBeyin.komutIsle(metin);
-                    input.value = ''; // Kutuyu temizle
+                    input.value = ''; 
                 }
             }
 
             btn.addEventListener('click', mesajGonder);
             input.addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    mesajGonder();
-                }
+                if (e.key === 'Enter') mesajGonder();
             });
+            
+            // Tarayıcı Ses Kilidi Kırıcı
+            document.body.addEventListener('click', function unlockAudio() {
+                const s = window.speechSynthesis;
+                const u = new SpeechSynthesisUtterance('');
+                u.volume = 0;
+                s.speak(u);
+                document.body.removeEventListener('click', unlockAudio);
+            }, { once: true });
         }
 
-        // --- 6. SİSTEMİ BAŞLATMA (BOOT SEQUENCE) ---
+        // --- BAŞLATMA ---
         window.onload = () => {
             const jarvis = new JarvisBeyin();
             const ses = new SesMotoru(jarvis);
             jarvis.sesMotorunuBagla(ses); 
-            
-            chatKurulumu(jarvis); // Chat arayüzünü beyne bağla
-            
-            console.log("J.A.R.V.I.S Çekirdeği Başlatıldı.");
+            chatKurulumu(jarvis); 
         };
+
+    </script>
+</body>
+</html>
 
     </script>
 </body>
