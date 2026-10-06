@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S - Nihai Öğrenme Çekirdeği v7.0</title>
+    <title>J.A.R.V.I.S - Gerçek Yapay Zeka Çekirdeği v8.1 (Güvenli)</title>
     
-    <!-- PDF Okuma Kütüphanesi (Slayt ve Belgeleri Taramak İçin) -->
+    <!-- PDF Okuma Kütüphanesi -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 
     <style>
-        /* --- GELİŞMİŞ GÖRSEL ARAYÜZ (UI) AYARLARI --- */
         :root {
             --jarvis-mavi: #00f3ff;
             --jarvis-koyu: #050a0f;
@@ -29,7 +28,7 @@
             overflow: hidden;
         }
 
-        /* Sol Panel - Durum ve Kontroller */
+        /* Sol Panel */
         #sol-panel {
             width: 320px;
             border-right: 1px solid rgba(0, 243, 255, 0.2);
@@ -136,20 +135,6 @@
             box-shadow: 0 0 20px var(--jarvis-mavi);
         }
 
-        #ses-baslat-btn.dinliyor {
-            background: rgba(255, 0, 60, 0.2);
-            border-color: var(--hata-kirmizi);
-            color: var(--hata-kirmizi);
-            box-shadow: 0 0 20px var(--hata-kirmizi);
-            animation: pulse-kirmizi 1.5s infinite;
-        }
-
-        @keyframes pulse-kirmizi {
-            0% { box-shadow: 0 0 10px var(--hata-kirmizi); }
-            50% { box-shadow: 0 0 25px var(--hata-kirmizi); }
-            100% { box-shadow: 0 0 10px var(--hata-kirmizi); }
-        }
-
         /* Sağ Panel */
         #sag-panel {
             flex-grow: 1;
@@ -207,7 +192,6 @@
             color: var(--uyari-sari);
             text-align: center;
             width: 90%;
-            text-shadow: 0 0 5px rgba(255,204,0,0.3);
         }
         
         .mesaj-sistem {
@@ -216,12 +200,9 @@
             font-size: 12px;
             border: none;
             background: none;
-            box-shadow: none;
-            padding: 5px;
-            margin: 0;
         }
 
-        /* CHAT VE DOSYA YÜKLEME ALANI */
+        /* CHAT ALANI */
         #chat-alani {
             display: flex;
             padding: 20px;
@@ -239,12 +220,6 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 20px;
-            transition: 0.3s;
-        }
-
-        #dosya-sec-btn:hover {
-            background: var(--jarvis-mavi);
-            color: var(--jarvis-koyu);
         }
 
         #metin-girisi {
@@ -257,13 +232,6 @@
             font-family: inherit;
             font-size: 16px;
             outline: none;
-            transition: 0.3s;
-        }
-
-        #metin-girisi:focus {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-color: var(--jarvis-mavi);
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
         }
 
         #gonder-btn {
@@ -276,13 +244,23 @@
             font-weight: bold;
             font-size: 16px;
             cursor: pointer;
-            text-transform: uppercase;
         }
 
-        /* Scrollbar */
         #terminal::-webkit-scrollbar { width: 10px; }
         #terminal::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.6); }
         #terminal::-webkit-scrollbar-thumb { background: rgba(0, 243, 255, 0.3); border-radius: 5px; }
+
+        /* Yükleme animasyonu */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 243, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--jarvis-mavi);
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -290,7 +268,7 @@
     <div id="sol-panel">
         <div class="baslik">J.A.R.V.I.S</div>
         <div id="sistem-saati">00:00:00</div>
-        <div class="izleme-durumu" id="izleme-durumu">● DOSYA TARAYICI VE AĞLAR AKTİF</div>
+        <div class="izleme-durumu">● GEMINI AI ÇEKİRDEĞİ DEVREDE</div>
         
         <div class="radar-container">
             <div id="ses-efekti" class="ses-dalgasi"></div>
@@ -300,8 +278,6 @@
         </div>
 
         <div id="durum" class="durum-metni">Sistem Başlatılıyor...<br>Lütfen bekleyin.</div>
-        
-        <!-- MİKROFON BUTONU -->
         <button id="ses-baslat-btn">MİKROFONU AÇ / DİNLE</button>
     </div>
 
@@ -311,93 +287,38 @@
                 -- Ağ Bağlantısı Kuruldu | Tarih: <span id="sys-date"></span> --
             </div>
             <div class="mesaj mesaj-jarvis">
-                <b>SİSTEM:</b> J.A.R.V.I.S Dosya Analiz ve Öğrenme Protokolü v7.0 yüklendi. PDF veya TXT dosyalarınızı sol alttaki ataş ikonundan yükleyebilirsiniz. "Bu dosyayı özetle" demeniz yeterlidir.
+                <b>SİSTEM:</b> J.A.R.V.I.S Gerçek Yapay Zeka Protokolü yüklendi.
             </div>
         </div>
         
         <div id="chat-alani">
-            <!-- DOSYA YÜKLEME GİZLİ İNPUT -->
             <input type="file" id="dosya-yukle" accept=".txt,.pdf" style="display: none;">
-            <!-- GÖRÜNÜR BUTON -->
             <button id="dosya-sec-btn" title="PDF veya Metin Belgesi Yükle">📁</button>
-
             <input type="text" id="metin-girisi" placeholder="İstediğiniz her şeyi sorabilirsiniz..." autocomplete="off">
             <button id="gonder-btn">Gönder</button>
         </div>
     </div>
 
     <script>
+        // API KEY TARAYICI HAFIZASINDAN ÇEKİLİYOR
+        let GEMINI_API_KEY = localStorage.getItem('jarvis_api_key');
+        
         document.getElementById('sys-date').textContent = new Date().toLocaleDateString('tr-TR');
-
-        // PDF.js Worker ayarı
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-        // --- SAAT ---
         function saatGuncelle() {
-            const simdi = new Date();
-            const saatMetni = simdi.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            document.getElementById('sistem-saati').textContent = saatMetni;
+            document.getElementById('sistem-saati').textContent = new Date().toLocaleTimeString('tr-TR');
         }
         setInterval(saatGuncelle, 1000);
         saatGuncelle();
 
-        // --- HAFIZA YÖNETİCİSİ ---
-        class HafizaYoneticisi {
-            constructor() {
-                this.hafizaAnahtari = "JARVIS_DERIN_BELLEK_V7";
-                this.bellek = this.hafizayiYukle();
-                this.sonTarananDosya = ""; // Dosya özeti için RAM bellek
-                this.cekirdekBilgileriGuncelle();
-            }
-
-            hafizayiYukle() {
-                try {
-                    const kayitliVeri = localStorage.getItem(this.hafizaAnahtari);
-                    return kayitliVeri ? JSON.parse(kayitliVeri) : { kisisel: {}, ogrenilenler: [] };
-                } catch (e) {
-                    return { kisisel: {}, ogrenilenler: [] };
-                }
-            }
-
-            kaydet() { localStorage.setItem(this.hafizaAnahtari, JSON.stringify(this.bellek)); }
-
-            cekirdekBilgileriGuncelle() {
-                this.bellek.kisisel = {
-                    isim: "Ömer Talha Kılıç",
-                    hitap: "Talha Bey",
-                    partner: "Ümmü Sude Turan",
-                    okul: "Konya Gıda ve Tarım Üniversitesi",
-                    sehir: "Konya"
-                };
-                this.kaydet();
-            }
-
-            yeniBilgiOgren(bilgi) {
-                const zaman = new Date().toLocaleString('tr-TR');
-                this.bellek.ogrenilenler.push({ veri: bilgi, tarih: zaman });
-                if (this.bellek.ogrenilenler.length > 50) this.bellek.ogrenilenler.shift();
-                this.kaydet();
-            }
-
-            ogrenilenleriGetir() {
-                if (!this.bellek.ogrenilenler || this.bellek.ogrenilenler.length === 0) 
-                    return "Şu an için bellek bankamda kayıtlı veri yok.";
-                
-                let metin = "Kalıcı belleğimdeki son kayıtlarınız:\n";
-                const sonKayitlar = this.bellek.ogrenilenler.slice(-5);
-                sonKayitlar.forEach((item, index) => {
-                    metin += `${index + 1}. ${item.veri}. `;
-                });
-                return metin;
-            }
-        }
-
-        // --- ARAYÜZ ---
         class Arayuz {
             static logYazdir(kim, metin) {
                 const terminal = document.getElementById('terminal');
+                const yukleniyorDiv = document.getElementById('yukleniyor-mesaj');
+                if (yukleniyorDiv) yukleniyorDiv.remove();
+
                 const mesajDiv = document.createElement('div');
-                
                 if (kim === 'uyari') {
                     mesajDiv.className = `mesaj mesaj-uyari`;
                     mesajDiv.innerHTML = `<b>⚠️ BİLDİRİM ⚠️</b><br>${metin}`;
@@ -406,16 +327,25 @@
                     mesajDiv.innerHTML = metin;
                 } else {
                     mesajDiv.className = `mesaj mesaj-${kim}`;
+                    const temizMetin = metin.replace(/\*\*/g, '').replace(/\*/g, '');
                     const kimlik = kim === 'jarvis' ? 'J.A.R.V.I.S' : 'SİZ';
-                    mesajDiv.innerHTML = `<b>${kimlik}:</b> ${metin}`;
+                    mesajDiv.innerHTML = `<b>${kimlik}:</b> ${temizMetin}`;
                 }
-                
                 terminal.appendChild(mesajDiv);
                 setTimeout(() => { terminal.scrollTo({ top: terminal.scrollHeight, behavior: 'smooth' }); }, 50);
             }
 
-            static durumGuncelle(metin) { document.getElementById('durum').innerHTML = metin; }
+            static dusunuyorGoster() {
+                const terminal = document.getElementById('terminal');
+                const mesajDiv = document.createElement('div');
+                mesajDiv.id = 'yukleniyor-mesaj';
+                mesajDiv.className = `mesaj mesaj-jarvis`;
+                mesajDiv.innerHTML = `<b>J.A.R.V.I.S:</b> <div class="loading"></div> Veriler işleniyor...`;
+                terminal.appendChild(mesajDiv);
+                terminal.scrollTop = terminal.scrollHeight;
+            }
 
+            static durumGuncelle(metin) { document.getElementById('durum').innerHTML = metin; }
             static dalgaAnimasyonu(aktif) {
                 const dalga = document.getElementById('ses-efekti');
                 if (aktif) dalga.classList.add('aktif-dalga');
@@ -423,21 +353,19 @@
             }
         }
 
-        // --- SES MOTORU ---
         class SesMotoru {
             constructor(beyin) {
                 this.beyin = beyin;
                 this.konusuyorMu = false;
                 this.sentez = window.speechSynthesis;
                 this.btn = document.getElementById('ses-baslat-btn');
-                
                 this.sesTanimaKur();
             }
 
             sesTanimaKur() {
                 const STT = window.SpeechRecognition || window.webkitSpeechRecognition;
                 if (!STT) {
-                    this.btn.innerText = "Tarayıcı Mikrofon Desteklemiyor";
+                    this.btn.innerText = "Mikrofon Desteklenmiyor";
                     Arayuz.durumGuncelle("Lütfen Chrome kullanın veya Chat'ten yazın.");
                     return;
                 }
@@ -461,17 +389,17 @@
 
                 this.dinleyici.onerror = (event) => {
                     if (event.error === 'not-allowed') {
-                        Arayuz.durumGuncelle("HATA: MİKROFON İZNİ YOK! Adres çubuğundaki kilit simgesine tıklayıp mikrofona izin verin.");
-                        this.btn.innerText = "MİKROFON İZNİ YOK";
+                        Arayuz.logYazdir("uyari", "MİKROFON İZNİ YOK! Dosyayı masaüstünden açtığınız için Chrome mikrofonu engelliyor. Lütfen kodu GitHub'a yükleyin veya komutları yazarak iletin.");
+                        this.btn.innerText = "İZİN REDDEDİLDİ";
                     } else {
-                        Arayuz.durumGuncelle("Sizi tam duyamadım.");
+                        Arayuz.durumGuncelle("Duyamadım.");
                     }
                     this.btn.classList.remove("dinliyor");
                     Arayuz.dalgaAnimasyonu(false);
                 };
 
                 this.dinleyici.onend = () => {
-                    this.btn.innerText = "MİKROFONU AÇ / DİNLE";
+                    if(this.btn.innerText !== "İZİN REDDEDİLDİ") this.btn.innerText = "MİKROFONU AÇ / DİNLE";
                     this.btn.classList.remove("dinliyor");
                     Arayuz.dalgaAnimasyonu(false);
                 };
@@ -483,13 +411,12 @@
                 });
             }
 
-            sesliSoyle(metin, acilMi = false) {
+            sesliSoyle(metin) {
                 this.sentez.cancel(); 
+                Arayuz.logYazdir("jarvis", metin);
                 
-                if (acilMi) Arayuz.logYazdir("uyari", metin);
-                else Arayuz.logYazdir("jarvis", metin);
-                
-                const utterance = new SpeechSynthesisUtterance(metin);
+                const okunacakMetin = metin.replace(/\*\*/g, '').replace(/\*/g, '');
+                const utterance = new SpeechSynthesisUtterance(okunacakMetin);
                 utterance.lang = 'tr-TR';
                 utterance.rate = 1.0; 
                 utterance.pitch = 0.9; 
@@ -508,89 +435,104 @@
             }
         }
 
-        // --- YAPAY ZEKA BEYNİ VE DOSYA OKUYUCU ---
+        class HafizaYoneticisi {
+            constructor() {
+                this.hafizaAnahtari = "JARVIS_KULLANICI_BELLEGI";
+                this.bellek = this.hafizayiYukle();
+            }
+
+            hafizayiYukle() {
+                try {
+                    const kayitliVeri = localStorage.getItem(this.hafizaAnahtari);
+                    return kayitliVeri ? JSON.parse(kayitliVeri) : [];
+                } catch (e) { return []; }
+            }
+
+            kaydet() { localStorage.setItem(this.hafizaAnahtari, JSON.stringify(this.bellek)); }
+
+            yeniBilgiEkle(bilgi) {
+                this.bellek.push(bilgi);
+                this.kaydet();
+            }
+
+            ogrenilenleriGetir() {
+                if (this.bellek.length === 0) return "";
+                return "Talha Bey hakkında bilmen gerekenler: " + this.bellek.join(". ");
+            }
+        }
+
         class JarvisBeyin {
             constructor() {
-                this.hafiza = new HafizaYoneticisi();
+                this.sonDosyaMetni = "";
+                this.hafizaYoneticisi = new HafizaYoneticisi();
             }
 
-            sesMotorunuBagla(motor) {
-                this.motor = motor;
-            }
+            sesMotorunuBagla(motor) { this.motor = motor; }
 
-            // Dosya İçeriğini Özetleyen Akıllı Algoritma
-            metniOzetle(metin) {
-                // Metni cümlelere böler
-                let cumleler = metin.split(/(?<=[.?!])\s+/).filter(c => c.trim().length > 15);
-                
-                if (cumleler.length <= 3) {
-                    return "Dosya içeriği çok kısa: " + metin;
+            async geminiyeSor(kullaniciMetni, ekGorev = "") {
+                if (!GEMINI_API_KEY) {
+                    return "API Anahtarı bulunamadı. Lütfen sayfayı yenileyip anahtarı girin.";
                 }
-                
-                // En önemli kısımlar genellikle ilk 2 cümle ve son cümledir.
-                let ozet = "İşte belgenin genel özeti: " + cumleler[0] + " " + cumleler[1] + " ... Ayrıca belgenin sonuç kısmında şu belirtilmiş: " + cumleler[cumleler.length - 1];
-                return ozet;
-            }
 
-            icindeGeciyorMu(sorgu, kelimeListesi) {
-                return kelimeListesi.some(kelime => sorgu.includes(kelime));
+                let prompt = `Senin adın J.A.R.V.I.S. Sen Ömer Talha Kılıç tarafından tasarlanmış çok zeki bir yapay zeka asistanısın. Kısa, net, akıllıca ve saygılı cevaplar ver.\n\n`;
+                
+                const ogrenilenler = this.hafizaYoneticisi.ogrenilenleriGetir();
+                if (ogrenilenler) prompt += `${ogrenilenler}\n\n`;
+                if (ekGorev) prompt += `GÖREV/DOSYA İÇERİĞİ:\n${ekGorev}\n\n`;
+                
+                prompt += `Talha Bey diyor ki: ${kullaniciMetni}`;
+
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+
+                    const veri = await response.json();
+                    if (veri.candidates && veri.candidates[0].content.parts[0].text) {
+                        return veri.candidates[0].content.parts[0].text;
+                    } else {
+                        return "Üzgünüm efendim, isteğinizi şu an işleyemiyorum.";
+                    }
+                } catch (hata) {
+                    return "Gemini bağlantısında bir hata meydana geldi.";
+                }
             }
 
             async komutIsle(hamKomut) {
                 if (!hamKomut || hamKomut.trim() === "") return;
-                const komut = hamKomut.toLowerCase().trim();
-                const kisisel = this.hafiza.bellek.kisisel;
+                
+                Arayuz.dusunuyorGoster();
 
-                // --- 1. DOSYA ÖZETLEME KOMUTU ---
-                if (this.icindeGeciyorMu(komut, ["özetle", "dosyayı oku", "slaytı oku", "ne anlatıyor"])) {
-                    if (this.hafiza.sonTarananDosya === "") {
-                        this.motor.sesliSoyle("Şu an hafızamda taranmış bir dosya veya slayt yok. Lütfen sol alttaki butondan bir belge yükleyin.");
+                let cevap = "";
+                let kucukKomut = hamKomut.toLowerCase();
+
+                if (kucukKomut.startsWith("şunu öğren") || kucukKomut.startsWith("hatırla") || kucukKomut.startsWith("unutma")) {
+                    let ogrenilecekBilgi = hamKomut.replace(/şunu öğren|hatırla|unutma/gi, "").trim();
+                    this.hafizaYoneticisi.yeniBilgiEkle(ogrenilecekBilgi);
+                    cevap = await this.geminiyeSor(`Kullanıcı sana şunu öğretti: "${ogrenilecekBilgi}". Bunu hafızana aldığını onaylayan kısa ve havalı bir Jarvis cevabı ver.`);
+                }
+                else if (kucukKomut.includes("özetle") || kucukKomut.includes("dosyayı oku") || kucukKomut.includes("slaytı")) {
+                    if (this.sonDosyaMetni === "") {
+                        cevap = "Hafızamda taranmış bir dosya bulunmuyor efendim. Lütfen sol alttaki ikondan bir belge yükleyin.";
                     } else {
-                        this.motor.sesliSoyle("Belgeyi analiz ediyorum...");
-                        let ozetMetni = this.metniOzetle(this.hafiza.sonTarananDosya);
-                        this.motor.sesliSoyle(ozetMetni);
+                        cevap = await this.geminiyeSor(hamKomut, `Lütfen şu metni Talha Bey için özetle:\n\n${this.sonDosyaMetni}`);
                     }
+                } 
+                else if (kucukKomut.includes("ekranı temizle")) {
+                    document.getElementById('terminal').innerHTML = `<div class="mesaj mesaj-sistem">-- Ekran Temizlendi --</div>`;
+                    this.motor.sesliSoyle("Arayüz temizlendi.");
                     return;
                 }
-
-                // --- 2. KİŞİSEL BİLGİLER VE ÖĞRENME ---
-                if (this.icindeGeciyorMu(komut, ["ben kimim", "beni tanıt"])) {
-                    this.motor.sesliSoyle(`Siz ${kisisel.isim}'sınız. Mimarım ve yöneticimsiniz.`);
-                    return;
+                else {
+                    cevap = await this.geminiyeSor(hamKomut);
                 }
 
-                if (komut.startsWith("şunu öğren") || komut.startsWith("kaydet") || komut.startsWith("hatırla")) {
-                    let ogrenilecek = komut.replace("şunu öğren", "").replace("kaydet", "").replace("hatırla", "").trim();
-                    if (ogrenilecek.length > 2) {
-                        this.hafiza.yeniBilgiOgren(ogrenilecek);
-                        this.motor.sesliSoyle(`Anlaşıldı. "${ogrenilecek}" bilgisini kalıcı derin belleğime yazdım.`);
-                    }
-                    return;
-                }
-
-                if (this.icindeGeciyorMu(komut, ["neler biliyorsun", "neler öğrendin", "hafızanda ne var"])) {
-                    this.motor.sesliSoyle(this.hafiza.ogrenilenleriGetir());
-                    return;
-                }
-
-                if (this.icindeGeciyorMu(komut, ["saat", "zaman", "saat kaç"])) {
-                    const saat = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-                    this.motor.sesliSoyle(`Saat şu an ${saat} efendim.`);
-                    return;
-                }
-
-                // --- 3. GOOGLE ARAMA KURTARICISI (HİÇBİR ŞEYİ BİLEMEZSE BURAYA GİRER) ---
-                this.motor.sesliSoyle("Veritabanımda buna dair kesin bir yanıt yok. Sizin için Google'da aratıyorum.");
-                
-                // Cümledeki gereksiz ekleri temizle
-                let aranan = komut.replace("jarvis", "").replace("bana", "").replace("ara", "").replace("bul", "").trim();
-                
-                // Google arama sayfasını yeni sekmede aç
-                window.open(`https://www.google.com/search?q=${encodeURIComponent(aranan)}`, "_blank");
+                this.motor.sesliSoyle(cevap);
             }
         }
 
-        // --- DOSYA YÜKLEME VE TARAMA SİSTEMİ ---
         function dosyaSisteminiKur(jarvisBeyin) {
             const dosyaButon = document.getElementById('dosya-sec-btn');
             const dosyaInput = document.getElementById('dosya-yukle');
@@ -601,50 +543,43 @@
                 const dosya = e.target.files[0];
                 if (!dosya) return;
 
-                Arayuz.logYazdir("jarvis", `[SİSTEM TARAMASI]: "${dosya.name}" adlı belge sisteme alınıyor...`);
+                Arayuz.logYazdir("sistem", `[SİSTEM TARAMASI]: "${dosya.name}" sisteme alınıyor...`);
                 Arayuz.durumGuncelle("Dosya taranıyor...");
 
                 try {
                     if (dosya.type === "text/plain") {
-                        // TXT Dosyası okuma
                         const reader = new FileReader();
                         reader.onload = function(evt) {
-                            jarvisBeyin.hafiza.sonTarananDosya = evt.target.result;
-                            Arayuz.logYazdir("jarvis", "Metin belgesi başarıyla tarandı. İçeriği hafızaya aldım. 'Bunu özetle' diyerek analizimi dinleyebilirsiniz.");
-                            Arayuz.durumGuncelle("Dosya Tarandı.");
+                            jarvisBeyin.sonDosyaMetni = evt.target.result.substring(0, 30000); 
+                            Arayuz.logYazdir("jarvis", "Metin belgesi tarandı. 'Bu dosyayı özetle' diyebilirsiniz.");
+                            Arayuz.durumGuncelle("Hazır.");
                         };
                         reader.readAsText(dosya);
                     } 
                     else if (dosya.type === "application/pdf") {
-                        // PDF Dosyası okuma
                         const arrayBuffer = await dosya.arrayBuffer();
                         const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
                         let tamMetin = "";
+                        const sayfaSayisi = pdf.numPages > 15 ? 15 : pdf.numPages; 
                         
-                        for (let i = 1; i <= pdf.numPages; i++) {
+                        for (let i = 1; i <= sayfaSayisi; i++) {
                             const sayfa = await pdf.getPage(i);
                             const icerik = await sayfa.getTextContent();
                             const sayfaMetni = icerik.items.map(item => item.str).join(" ");
                             tamMetin += sayfaMetni + " ";
                         }
 
-                        jarvisBeyin.hafiza.sonTarananDosya = tamMetin;
-                        Arayuz.logYazdir("jarvis", `Slayt/PDF belgesi (${pdf.numPages} sayfa) tarandı. Hafızama kaydettim. 'Bu dosyayı özetle' diyebilirsiniz.`);
-                        Arayuz.durumGuncelle("Dosya Tarandı.");
+                        jarvisBeyin.sonDosyaMetni = tamMetin.substring(0, 30000);
+                        Arayuz.logYazdir("jarvis", `Slayt/PDF belgesi tarandı. Dosya hakkında sorular sorabilirsiniz.`);
+                        Arayuz.durumGuncelle("Hazır.");
                     } 
-                    else {
-                        Arayuz.logYazdir("uyari", "Desteklenmeyen dosya formatı. Lütfen sadece .txt veya .pdf yükleyin.");
-                    }
                 } catch (hata) {
-                    Arayuz.logYazdir("uyari", "Dosya okunurken bir hata oluştu: " + hata.message);
+                    Arayuz.logYazdir("uyari", "Dosya okunurken bir hata oluştu.");
                 }
-                
-                // Aynı dosyayı tekrar yükleyebilmek için inputu sıfırla
                 dosyaInput.value = "";
             });
         }
 
-        // --- CHAT YÖNETİMİ ---
         function chatKurulumu(jarvisBeyin) {
             const input = document.getElementById('metin-girisi');
             const btn = document.getElementById('gonder-btn');
@@ -663,7 +598,6 @@
                 if (e.key === 'Enter') mesajGonder();
             });
             
-            // Tarayıcı Ses Kilidi
             document.body.addEventListener('click', function unlockAudio() {
                 const s = window.speechSynthesis;
                 const u = new SpeechSynthesisUtterance('');
@@ -673,11 +607,19 @@
             }, { once: true });
         }
 
-        // --- SİSTEMİ BAŞLATMA ---
         window.onload = () => {
-            // file:// protokolü uyarısı
+            // Şifreyi sorma penceresi
+            if (!GEMINI_API_KEY) {
+                GEMINI_API_KEY = prompt("Lütfen J.A.R.V.I.S'i başlatmak için Gemini API Anahtarınızı girin:\n(Bu şifre sadece tarayıcınıza kaydedilecektir)");
+                if (GEMINI_API_KEY) {
+                    localStorage.setItem('jarvis_api_key', GEMINI_API_KEY);
+                } else {
+                    alert("API Anahtarı girmediniz. Sistem çevrimdışı olacak.");
+                }
+            }
+
             if (window.location.protocol === 'file:') {
-                Arayuz.logYazdir("uyari", "DİKKAT: Sistemi bilgisayarınızdan doğrudan açtınız (file://). Tarayıcılar bu modda mikrofona İZİN VERMEZ! Lütfen komutları chat kısmından yazın veya dosyayı bir web sunucusuna (GitHub) yükleyin.");
+                Arayuz.logYazdir("uyari", "MİKROFON UYARISI: HTML dosyasını masaüstünden açtığınız için Chrome mikrofona izin vermeyecektir. Lütfen dosyayı GitHub'a yükleyerek çalıştırın.");
             }
 
             const jarvis = new JarvisBeyin();
@@ -686,7 +628,6 @@
             chatKurulumu(jarvis); 
             dosyaSisteminiKur(jarvis);
         };
-
     </script>
 </body>
 </html>
