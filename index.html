@@ -3,133 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sana Bir Mesaj Var ❤️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+    <title>J.A.R.V.I.S Akıllı Rehber</title>
     <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            /* Koyu kadife kırmızısından siyaha asil bir geçiş */
-            background: radial-gradient(circle at center, #3a0a13 0%, #0a0203 100%); 
-            font-family: 'Playfair Display', serif;
-            overflow: hidden;
-        }
-
-        .heart-container {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 200px;
-        }
-
-        .heart {
-            font-size: 50px;
-            animation: growAndBeat 3.5s forwards;
-            /* Daha yumuşak, premium bir parlama efekti */
-            filter: drop-shadow(0 0 15px rgba(255, 15, 65, 0.4)); 
-        }
-
-        /* Lüks kalp atışı animasyonu */
-        @keyframes growAndBeat {
-            0% { transform: scale(0); color: #ff4d6d; }
-            40% { transform: scale(3.5); color: #c9184a; filter: drop-shadow(0 0 30px rgba(201, 24, 74, 0.6));}
-            50% { transform: scale(3.2); color: #ff0f41; filter: drop-shadow(0 0 20px rgba(255, 15, 65, 0.5));}
-            60% { transform: scale(3.8); color: #ff0f41; filter: drop-shadow(0 0 40px rgba(255, 15, 65, 0.7));}
-            70% { transform: scale(3.4); color: #ff0f41; filter: drop-shadow(0 0 25px rgba(255, 15, 65, 0.5));}
-            100% { transform: scale(3.5); color: #ff0f41; filter: drop-shadow(0 0 35px rgba(255, 15, 65, 0.6));}
-        }
-
-        .message-container {
-            margin-top: 40px;
-            height: 120px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        body { 
+            background-color: #050505; 
+            color: #00ffcc; 
+            font-family: 'Courier New', Courier, monospace; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
             text-align: center;
-            padding: 0 30px;
-            position: relative;
-            width: 100%;
-            max-width: 800px;
         }
-
-        .message {
-            font-size: 2.2rem;
-            /* Şampanya / Rose Gold rengi, çok asil durur */
-            color: #f7d2b6; 
-            font-style: italic;
-            text-shadow: 0px 5px 15px rgba(0,0,0,0.8);
-            opacity: 0; 
-            transform: translateY(20px) scale(0.95);
-            letter-spacing: 0px;
-            /* Geçişler yumuşak ve sinematik */
-            transition: opacity 1s ease-out, transform 1s ease-out; 
-            position: absolute;
-            width: 100%;
+        #baslat-btn { 
+            background-color: transparent; 
+            border: 2px solid #00ffcc; 
+            color: #00ffcc; 
+            padding: 15px 40px; 
+            font-size: 20px; 
+            cursor: pointer; 
+            border-radius: 8px; 
+            transition: 0.3s; 
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
         }
-
-        .message.show {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            letter-spacing: 1.5px; /* Ekrana gelince harfler çok hafif açılır */
-            transition: opacity 1s ease-out, transform 1s ease-out, letter-spacing 3s ease-out;
+        #baslat-btn:hover { 
+            background-color: #00ffcc; 
+            color: #050505; 
+            box-shadow: 0 0 20px #00ffcc;
         }
+        #ekran { 
+            width: 80%;
+            max-width: 600px;
+            height: 200px;
+            border: 1px solid #00ffcc;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #111;
+            box-shadow: inset 0 0 10px #000;
+            text-align: left;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .jarvis-mesaj { color: #00ffcc; margin-bottom: 10px; }
+        .kullanici-mesaj { color: #fff; margin-bottom: 10px; font-style: italic; }
     </style>
 </head>
 <body>
 
-    <div class="heart-container">
-        <div class="heart">❤️</div>
-    </div>
-    
-    <div class="message-container">
-        <div id="dynamic-message" class="message"></div>
+    <h1>J.A.R.V.I.S V2.0</h1>
+    <button id="baslat-btn">Sistemi Başlat / Dinle</button>
+    <div id="ekran">
+        <div class="jarvis-mesaj">Sistem beklemede... Asistanı başlatmak için butona tıklayın.</div>
     </div>
 
     <script>
-        const messages = [
-            "Bu site ÜMMÜ SUDE TURAN yani canım aşkıma hazırlandı",
-            "Sevgililer günümüz kutlu olsun bitanem",
-            "Seni çok seviyorum yavruşum",
-            "En güzel günüm seni tanıdığım gün yavruşum",
-            "Nice bizli 14 şubatlara kadınımm"
-        ];
+        const btn = document.getElementById('baslat-btn');
+        const ekranDiv = document.getElementById('ekran');
 
-        let currentIndex = 0;
-        const messageElement = document.getElementById("dynamic-message");
+        // Ekrana yazı yazdırma fonksiyonu
+        function logYazdir(kim, metin) {
+            const satir = document.createElement('div');
+            satir.className = kim === 'jarvis' ? 'jarvis-mesaj' : 'kullanici-mesaj';
+            satir.innerHTML = (kim === 'jarvis' ? '<b>J.A.R.V.I.S:</b> ' : '<b>Siz:</b> ') + metin;
+            ekranDiv.appendChild(satir);
+            ekranDiv.scrollTop = ekranDiv.scrollHeight; // Otomatik aşağı kaydır
+        }
 
-        // Kalp animasyonu bitene kadar bekle
-        setTimeout(() => {
-            showNextMessage();
-        }, 3500);
+        // Metni sese çevirme
+        function konus(metin) {
+            logYazdir('jarvis', metin);
+            const asistanSesi = new SpeechSynthesisUtterance(metin);
+            asistanSesi.lang = 'tr-TR';
+            asistanSesi.rate = 1.0; 
+            window.speechSynthesis.speak(asistanSesi);
+        }
 
-        function showNextMessage() {
-            if (currentIndex < messages.length) {
-                messageElement.innerText = messages[currentIndex];
+        // Web Tarayıcı Ses Tanıma Motoru
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        
+        if (!SpeechRecognition) {
+            logYazdir('jarvis', "Tarayıcınız ses tanıma özelliğini desteklemiyor. Lütfen Google Chrome kullanın.");
+        } else {
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'tr-TR';
+            recognition.interimResults = false;
+
+            recognition.onstart = function() {
+                btn.innerText = "Dinleniyor...";
+                btn.style.backgroundColor = "#ff0055";
+                btn.style.color = "#fff";
+                btn.style.borderColor = "#ff0055";
+            };
+
+            recognition.onspeechend = function() {
+                recognition.stop();
+                btn.innerText = "Sistemi Başlat / Dinle";
+                btn.style.backgroundColor = "transparent";
+                btn.style.color = "#00ffcc";
+                btn.style.borderColor = "#00ffcc";
+            };
+
+            recognition.onresult = function(event) {
+                const sorgu = event.results[0][0].transcript.toLowerCase();
+                logYazdir('kullanici', sorgu);
                 
-                // Mesajı ekrana getir (sinematik efektlerle)
-                // Ufak bir gecikme ekliyoruz ki tarayıcı animasyonu yakalayabilsin
-                setTimeout(() => {
-                    messageElement.classList.add("show");
-                }, 50);
+                // --- 1. TEMEL KOMUTLAR ---
+                if (sorgu.includes("merhaba")) {
+                    konus("Sistemler devrede Talha Bey. Size nasıl yardımcı olabilirim?");
+                
+                } else if (sorgu.includes("saat kaç")) {
+                    const saat = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+                    konus("Saat şu an " + saat);
+                
+                // --- 2. GÜNDEM VE HABERLER ---
+                } else if (sorgu.includes("gündem") || sorgu.includes("haberler")) {
+                    konus("Güncel manşetleri tarıyorum, lütfen bekleyin...");
+                    fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.trthaber.com/manset_artikeller.rss')
+                        .then(res => res.json())
+                        .then(data => {
+                            let haberler = data.items.slice(0, 3); // İlk 3 haber
+                            konus("Gündemdeki öne çıkan 3 haber şöyle:");
+                            setTimeout(() => { konus(haberler[0].title); }, 3000);
+                            setTimeout(() => { konus(haberler[1].title); }, 7000);
+                            setTimeout(() => { konus(haberler[2].title); }, 11000);
+                        })
+                        .catch(() => konus("Haber sunucularına şu an ulaşılamıyor."));
 
-                if (currentIndex < messages.length - 1) {
-                    // Yazı tam 2 saniye ekranda kalsın
-                    setTimeout(() => {
-                        messageElement.classList.remove("show");
-                        currentIndex++;
-                        
-                        // 1 saniye kaybolma efekti sürsün, sonra sıradaki gelsin
-                        setTimeout(showNextMessage, 1000); 
-                    }, 2000); 
+                // --- 3. WIKIPEDIA BİLGİ ARAMASI ---
+                } else if (sorgu.includes("nedir") || sorgu.includes("kimdir")) {
+                    konus("Veritabanımda arıyorum...");
+                    let aranan = sorgu.replace("nedir", "").replace("kimdir", "").trim();
+                    fetch(`https://tr.wikipedia.org/api/rest_v1/page/summary/${aranan}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.extract) {
+                                konus(data.extract); // Özeti okur
+                            } else {
+                                konus("Bu konu hakkında kesin bir bilgi bulamadım.");
+                            }
+                        });
+
+                // --- 4. ÖĞRENME VE HAFIZA SİSTEMİ ---
+                } else if (sorgu.includes("şunu öğren") || sorgu.includes("aklında tut")) {
+                    let ogrenilecekBilgi = sorgu.replace("şunu öğren", "").replace("aklında tut", "").trim();
+                    
+                    // Tarayıcının yerel hafızasına kaydet (Sekme kapansa bile silinmez)
+                    let eskiBilgiler = localStorage.getItem("jarvis_hafiza") || "";
+                    localStorage.setItem("jarvis_hafiza", eskiBilgiler + " | " + ogrenilecekBilgi);
+                    
+                    konus("Bu bilgiyi hafızama kaydettim.");
+
+                } else if (sorgu.includes("neler biliyorsun") || sorgu.includes("ne öğrenmiştin") || sorgu.includes("hafızanda ne var")) {
+                    let bilgiler = localStorage.getItem("jarvis_hafiza");
+                    if (bilgiler) {
+                        konus("Öğrettiğiniz kayıtlar şunlar: " + bilgiler.replace(/\|/g, ". "));
+                    } else {
+                        konus("Hafızamda henüz size dair özel bir kayıt bulunmuyor.");
+                    }
+                    
+                } else if (sorgu.includes("hafızayı temizle") || sorgu.includes("bildiklerini unut")) {
+                    localStorage.removeItem("jarvis_hafiza");
+                    konus("Tüm kişisel kayıtlar sistemden silindi.");
+
+                } else {
+                    konus("Bu komutu eşleştiremedim. Söylemek istediğiniz kelimeleri netleştirin.");
                 }
-            }
+            };
+
+            btn.addEventListener('click', () => {
+                recognition.start();
+            });
         }
     </script>
-
 </body>
 </html>
